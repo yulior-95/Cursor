@@ -1,204 +1,541 @@
 <!DOCTYPE html>
-<html lang="zh">
+<html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>专注计时器原型</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>加密货币IM应用</title>
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+        
         body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
+            background-color: #f5f5f7;
+            color: #333;
+            line-height: 1.4;
+            -webkit-font-smoothing: antialiased;
+        }
+        
+        /* 状态栏 */
+        .status-bar {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 15px;
+            font-weight: bold;
+            font-size: 14px;
+        }
+        
+        .status-bar-right {
+            display: flex;
+            gap: 5px;
+        }
+        
+        /* 用户信息 */
+        .user-profile {
+            display: flex;
+            padding: 15px;
+            align-items: center;
+            position: relative;
+        }
+        
+        .avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background-color: #a8c0d6;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .qr-code {
+            position: absolute;
+            right: 0;
+            bottom: 0;
+            background-color: white;
+            border-radius: 4px;
+            padding: 2px;
+            font-size: 12px;
+        }
+        
+        .user-info {
+            margin-left: 15px;
+            flex: 1;
+        }
+        
+        .username {
+            font-size: 22px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+        }
+        
+        .username::after {
+            content: ">";
+            margin-left: 5px;
+            color: #ccc;
+        }
+        
+        .user-id {
+            font-size: 14px;
+            color: #666;
+            margin-top: 5px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .copy-icon {
+            margin-left: 5px;
+            color: #4080ff;
+            border: 1px solid #4080ff;
+            border-radius: 4px;
+            padding: 2px;
+            font-size: 12px;
+        }
+        
+        .verification {
+            position: absolute;
+            right: 15px;
+            top: 30px;
+            background-color: #4cd964;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 14px;
+        }
+        
+        /* 功能按钮 */
+        .function-buttons {
+            display: flex;
+            justify-content: space-around;
+            padding: 15px 10px 25px;
+        }
+        
+        .function-button {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 25%;
+        }
+        
+        .function-icon {
+            width: 50px;
+            height: 50px;
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
-            margin: 0;
+            margin-bottom: 8px;
+            position: relative;
         }
-        .container {
-            background: white;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            padding: 20px;
-            text-align: center;
+        
+        .function-label {
+            font-size: 14px;
         }
-        .timer {
-            font-size: 48px;
-            margin: 20px 0;
-        }
-        .button {
-            background-color: #007bff;
+        
+        .tag {
+            position: absolute;
+            top: -5px;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 12px;
             color: white;
-            border: none;
-            border-radius: 5px;
-            padding: 15px 30px;
-            font-size: 18px;
-            cursor: pointer;
-            margin: 10px;
-            transition: background-color 0.3s;
         }
-        .button:hover {
-            background-color: #0056b3;
+        
+        .tag-green {
+            background-color: #4cd964;
         }
-        .status {
-            margin-top: 20px;
+        
+        .tag-blue {
+            background-color: #4080ff;
+        }
+        
+        /* 资产信息 */
+        .assets {
+            padding: 15px;
+        }
+        
+        .total-assets {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .assets-label {
+            display: flex;
+            align-items: center;
             font-size: 16px;
+            font-weight: bold;
+        }
+        
+        .eye-icon {
+            margin-left: 5px;
+        }
+        
+        .assets-amount {
+            display: flex;
+            align-items: center;
+            font-size: 28px;
+            font-weight: bold;
+            color: #4080ff;
+        }
+        
+        .refresh-icon {
+            margin-left: 10px;
             color: #666;
+        }
+        
+        /* 币种卡片 */
+        .currency-card {
+            background-color: white;
+            border-radius: 12px;
+            padding: 15px;
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .currency-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-color: #26de81;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-weight: bold;
+            font-size: 20px;
+            margin-right: 15px;
+        }
+        
+        .currency-info {
+            flex: 1;
+        }
+        
+        .currency-name {
+            font-size: 20px;
+            font-weight: bold;
+        }
+        
+        .currency-rate {
+            display: flex;
+            align-items: center;
+            color: #999;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+        
+        .down-arrow {
+            color: #ff3b30;
+            margin-left: 5px;
+        }
+        
+        .currency-amount {
+            text-align: right;
+        }
+        
+        .amount-value {
+            font-size: 22px;
+            font-weight: bold;
+            color: #4080ff;
+        }
+        
+        .amount-converted {
+            color: #999;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+        
+        /* 收起按钮 */
+        .collapse-button {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 10px 0;
+            color: #4080ff;
+            font-size: 14px;
+        }
+        
+        .up-arrow {
+            margin-right: 5px;
+        }
+        
+        /* 设置菜单 */
+        .settings-menu {
+            margin-top: 15px;
+        }
+        
+        .menu-item {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            background-color: white;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        
+        .menu-icon {
+            width: 30px;
+            height: 30px;
+            border-radius: 8px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-right: 15px;
+            color: white;
+            font-size: 18px;
+        }
+        
+        .icon-payment {
+            background-color: #ff6b6b;
+        }
+        
+        .icon-notification {
+            background-color: #4080ff;
+        }
+        
+        .icon-chat {
+            background-color: #ff6b6b;
+        }
+        
+        .icon-privacy {
+            background-color: #ffa502;
+        }
+        
+        .icon-security {
+            background-color: #2ecc71;
+        }
+        
+        .icon-general {
+            background-color: #3498db;
+        }
+        
+        .menu-label {
+            flex: 1;
+            font-size: 16px;
+        }
+        
+        .menu-arrow {
+            color: #ccc;
+        }
+        
+        /* 底部导航 */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            display: flex;
+            background-color: white;
+            padding: 10px 0 25px;
+            border-top: 1px solid #f0f0f0;
+        }
+        
+        .nav-item {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-size: 12px;
+            color: #999;
+            position: relative;
+        }
+        
+        .nav-icon {
+            margin-bottom: 5px;
+            position: relative;
+        }
+        
+        .nav-active {
+            color: #4080ff;
+        }
+        
+        .badge {
+            position: absolute;
+            top: -5px;
+            right: -10px;
+            background-color: #ff3b30;
+            color: white;
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 10px;
+        }
+        
+        /* 底部安全区域 */
+        .bottom-safe-area {
+            height: 20px;
+            background-color: white;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            border-top: 1px solid #f0f0f0;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>专注计时器</h1>
-        <div class="timer" id="timer">25:00</div>
-        <button class="button" id="startButton"><i class="fas fa-play"></i> 开始</button>
-        <button class="button" id="pauseButton"><i class="fas fa-pause"></i> 暂停</button>
-        <button class="button" id="resetButton"><i class="fas fa-stop"></i> 重置</button>
-        <div class="status" id="status">状态: 准备就绪</div>
-    </div>
-
-    <script>
-        let timer;
-        let timeLeft = 1500; // 25分钟
-        const timerDisplay = document.getElementById('timer');
-        const statusDisplay = document.getElementById('status');
-
-        document.getElementById('startButton').onclick = function() {
-            clearInterval(timer);
-            timer = setInterval(() => {
-                if (timeLeft <= 0) {
-                    clearInterval(timer);
-                    statusDisplay.textContent = "状态: 时间到！";
-                } else {
-                    timeLeft--;
-                    const minutes = Math.floor(timeLeft / 60);
-                    const seconds = timeLeft % 60;
-                    timerDisplay.textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
-                    statusDisplay.textContent = "状态: 进行中";
-                }
-            }, 1000);
-        };
-
-        document.getElementById('pauseButton').onclick = function() {
-            clearInterval(timer);
-            statusDisplay.textContent = "状态: 暂停中";
-        };
-
-        document.getElementById('resetButton').onclick = function() {
-            clearInterval(timer);
-            timeLeft = 1500;
-            timerDisplay.textContent = "25:00";
-            statusDisplay.textContent = "状态: 准备就绪";
-        };
-    </script>
-</body>
-</html><!DOCTYPE html>
-<html lang="zh">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>专注计时器原型</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-        }
-        .container {
-            background: white;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            padding: 20px;
-            text-align: center;
-        }
-        .timer {
-            font-size: 48px;
-            margin: 20px 0;
-        }
-        .button {
-            background-color: #007bff;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            padding: 15px 30px;
-            font-size: 18px;
-            cursor: pointer;
-            margin: 10px;
-            transition: background-color 0.3s;
-        }
-        .button:hover {
-            background-color: #0056b3;
-        }
-        .status {
-            margin-top: 20px;
-            font-size: 16px;
-            color: #666;
-        }
-        .settings {
-            margin-top: 20px;
-        }
-        .input-time {
-            width: 60px;
-            text-align: center;
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <h1>专注计时器</h1>
-        <div class="timer" id="timer">25:00</div>
-        <div class="settings">
-            <label for="workTime">工作时间 (分钟):</label>
-            <input type="number" id="workTime" class="input-time" value="25" min="1">
-            <label for="breakTime">休息时间 (分钟):</label>
-            <input type="number" id="breakTime" class="input-time" value="5" min="1">
+    <!-- 状态栏 -->
+    <div class="status-bar">
+        <div>9:41</div>
+        <div class="status-bar-right">
+            <div>●●●</div>
+            <div>📶</div>
+            <div>🔋</div>
         </div>
-        <button class="button" id="startButton"><i class="fas fa-play"></i> 开始</button>
-        <button class="button" id="pauseButton"><i class="fas fa-pause"></i> 暂停</button>
-        <button class="button" id="resetButton"><i class="fas fa-stop"></i> 重置</button>
-        <div class="status" id="status">状态: 准备就绪</div>
     </div>
-
-    <script>
-        let timer;
-        let timeLeft = 1500; // 默认25分钟
-        const timerDisplay = document.getElementById('timer');
-        const statusDisplay = document.getElementById('status');
-
-        document.getElementById('startButton').onclick = function() {
-            clearInterval(timer);
-            const workTime = parseInt(document.getElementById('workTime').value) * 60;
-            timeLeft = workTime;
-            timer = setInterval(() => {
-                if (timeLeft <= 0) {
-                    clearInterval(timer);
-                    statusDisplay.textContent = "状态: 时间到！";
-                } else {
-                    timeLeft--;
-                    const minutes = Math.floor(timeLeft / 60);
-                    const seconds = timeLeft % 60;
-                    timerDisplay.textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
-                    statusDisplay.textContent = "状态: 进行中";
-                }
-            }, 1000);
-        };
-
-        document.getElementById('pauseButton').onclick = function() {
-            clearInterval(timer);
-            statusDisplay.textContent = "状态: 暂停中";
-        };
-
-        document.getElementById('resetButton').onclick = function() {
-            clearInterval(timer);
-            timeLeft = 1500;
-            timerDisplay.textContent = "25:00";
-            statusDisplay.textContent = "状态: 准备就绪";
-        };
-    </script>
+    
+    <!-- 用户信息 -->
+    <div class="user-profile">
+        <div class="avatar">
+            <img src="/placeholder.svg?height=80&width=80" alt="用户头像">
+            <div class="qr-code">🔍</div>
+        </div>
+        <div class="user-info">
+            <div class="username">UsernameL...</div>
+            <div class="user-id">ID：hui0548712 <span class="copy-icon">📋</span></div>
+        </div>
+        <div class="verification">
+            <span>✓</span> 初级认证
+        </div>
+    </div>
+    
+    <!-- 功能按钮 -->
+    <div class="function-buttons">
+        <div class="function-button">
+            <div class="function-icon">
+                <span>💰</span>
+            </div>
+            <div class="function-label">买卖币</div>
+        </div>
+        <div class="function-button">
+            <div class="function-icon">
+                <span class="tag tag-green">充币</span>
+                <span>📱</span>
+            </div>
+            <div class="function-label">收款</div>
+        </div>
+        <div class="function-button">
+            <div class="function-icon">
+                <span class="tag tag-blue">提币</span>
+                <span>💳</span>
+            </div>
+            <div class="function-label">转账</div>
+        </div>
+        <div class="function-button">
+            <div class="function-icon">
+                <span>📃</span>
+            </div>
+            <div class="function-label">账单</div>
+        </div>
+    </div>
+    
+    <!-- 资产信息 -->
+    <div class="assets">
+        <div class="total-assets">
+            <div class="assets-label">
+                总资产 <span class="eye-icon">👁️</span>
+            </div>
+            <div class="assets-amount">
+                ¥10000.00 <span class="refresh-icon">🔄</span>
+            </div>
+        </div>
+        
+        <!-- USDT卡片 -->
+        <div class="currency-card">
+            <div class="currency-icon">₮</div>
+            <div class="currency-info">
+                <div class="currency-name">USDT</div>
+                <div class="currency-rate">
+                    0.449RMB <span class="down-arrow">▼</span>
+                </div>
+            </div>
+            <div class="currency-amount">
+                <div class="amount-value">100</div>
+                <div class="amount-converted">≈ ¥725.00</div>
+            </div>
+        </div>
+        
+        <!-- 收起按钮 -->
+        <div class="collapse-button">
+            <span class="up-arrow">▲</span> 全部收起
+        </div>
+    </div>
+    
+    <!-- 设置菜单 -->
+    <div class="settings-menu">
+        <div class="menu-item">
+            <div class="menu-icon icon-payment">💳</div>
+            <div class="menu-label">支付方式</div>
+            <div class="menu-arrow">›</div>
+        </div>
+        <div class="menu-item">
+            <div class="menu-icon icon-notification">🔔</div>
+            <div class="menu-label">通知设置</div>
+            <div class="menu-arrow">›</div>
+        </div>
+        <div class="menu-item">
+            <div class="menu-icon icon-chat">💬</div>
+            <div class="menu-label">聊天设置</div>
+            <div class="menu-arrow">›</div>
+        </div>
+        <div class="menu-item">
+            <div class="menu-icon icon-privacy">🔒</div>
+            <div class="menu-label">隐私</div>
+            <div class="menu-arrow">›</div>
+        </div>
+        <div class="menu-item">
+            <div class="menu-icon icon-security">🛡️</div>
+            <div class="menu-label">安全</div>
+            <div class="menu-arrow">›</div>
+        </div>
+        <div class="menu-item">
+            <div class="menu-icon icon-general">⚙️</div>
+            <div class="menu-label">通用</div>
+            <div class="menu-arrow">›</div>
+        </div>
+    </div>
+    
+    <!-- 底部导航 -->
+    <div class="bottom-nav">
+        <div class="nav-item">
+            <div class="nav-icon">
+                💬
+                <span class="badge">40</span>
+            </div>
+            <div>消息</div>
+        </div>
+        <div class="nav-item">
+            <div class="nav-icon">👥</div>
+            <div>通讯录</div>
+        </div>
+        <div class="nav-item">
+            <div class="nav-icon">📞</div>
+            <div>通话</div>
+        </div>
+        <div class="nav-item nav-active">
+            <div class="nav-icon">
+                👤
+                <span class="badge" style="background-color: #ff3b30; width: 8px; height: 8px;"></span>
+            </div>
+            <div>我</div>
+        </div>
+    </div>
+    
+    <!-- 底部安全区域 -->
+    <div class="bottom-safe-area">
+        <div style="width: 30%; height: 5px; background-color: #000; border-radius: 3px; margin: 8px auto;"></div>
+    </div>
 </body>
 </html>
