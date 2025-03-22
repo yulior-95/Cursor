@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>群聊转账</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .group-avatar {
+            @apply w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center text-white text-lg font-medium;
+        }
+        
+        .member-avatar {
+            @apply w-6 h-6 rounded-full border-2 border-white;
+        }
+        
+        .member-stack {
+            @apply flex -space-x-2;
+        }
+        
+        .transfer-type {
+            @apply text-xs px-2 py-1 rounded-full;
+        }
+        
+        .type-split {
+            @apply bg-purple-50 text-purple-600;
+        }
+        
+        .type-single {
+            @apply bg-blue-50 text-blue-600;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- 搜索栏 -->
+    <div class="sticky top-0 z-10 bg-white p-4 shadow-sm">
+        <div class="flex items-center bg-gray-100 rounded-full p-2">
+            <i class="fas fa-search text-gray-400 mx-2"></i>
+            <input type="text" 
+                   placeholder="搜索群聊名称/转账说明" 
+                   class="bg-transparent flex-1 outline-none text-sm">
+        </div>
+    </div>
+
+    <!-- 快速筛选 -->
+    <div class="p-4 flex space-x-3 overflow-x-auto">
+        <button class="px-4 py-2 bg-primary-500 text-white rounded-full text-sm whitespace-nowrap">
+            全部记录
+        </button>
+        <button class="px-4 py-2 bg-gray-100 text-gray-600 rounded-full text-sm whitespace-nowrap">
+            已发起
+        </button>
+        <button class="px-4 py-2 bg-gray-100 text-gray-600 rounded-full text-sm whitespace-nowrap">
+            已收到
+        </button>
+        <button class="px-4 py-2 bg-gray-100 text-gray-600 rounded-full text-sm whitespace-nowrap">
+            待确认
+        </button>
+    </div>
+
+    <!-- 转账列表 -->
+    <div class="bg-white">
+        <!-- 群转账记录 -->
+        <div class="p-4 border-b border-gray-100">
+            <div class="flex">
+                <div class="group-avatar mr-3">
+                    <span>币</span>
+                </div>
+                <div class="flex-1">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <div class="font-medium">Web3创业者交流群</div>
+                            <div class="text-sm text-gray-500 mt-1">
+                                <span class="transfer-type type-split">均分</span>
+                                <span class="ml-2">5人参与</span>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <div class="text-red-500 font-medium">-500 USDT</div>
+                            <div class="text-xs text-gray-500 mt-1">每人 100 USDT</div>
+                        </div>
+                    </div>
+                    
+                    <div class="flex justify-between items-center mt-3">
+                        <div class="member-stack">
+                            <img src="https://via.placeholder.com/24" class="member-avatar" />
+                            <img src="https://via.placeholder.com/24" class="member-avatar" />
+                            <img src="https://via.placeholder.com/24" class="member-avatar" />
+                            <div class="member-avatar bg-gray-200 flex items-center justify-center text-xs text-gray-500">
+                                +2
+                            </div>
+                        </div>
+                        <div class="text-xs text-gray-400">今天 14:30</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="p-4 border-b border-gray-100">
+            <div class="flex">
+                <div class="group-avatar mr-3 from-green-500 to-green-600">
+                    <span>创</span>
+                </div>
+                <div class="flex-1">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <div class="font-medium">创新技术研究群</div>
+                            <div class="text-sm text-gray-500 mt-1">
+                                <span class="transfer-type type-single">定向</span>
+                                <span class="ml-2">张三</span>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <div class="text-green-500 font-medium">+200 USDT</div>
+                            <div class="text-xs text-gray-500 mt-1">项目奖励</div>
+                        </div>
+                    </div>
+                    
+                    <div class="flex justify-between items-center mt-3">
+                        <div class="text-sm text-gray-500">
+                            备注：二期项目开发奖励
+                        </div>
+                        <div class="text-xs text-gray-400">今天 11:25</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 悬浮统计按钮 -->
+    <div class="fixed bottom-20 right-4 flex flex-col space-y-2">
+        <button class="w-12 h-12 rounded-full bg-white shadow-lg flex items-center justify-center" onclick="showStats()">
+            <i class="fas fa-chart-pie text-gray-600"></i>
+        </button>
+    </div>
+
+    <!-- 统计弹窗 -->
+    <div id="statsModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50">
+        <div class="absolute bottom-0 left-0 right-0 bg-white rounded-t-2xl p-6">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-lg font-medium">群转账统计</h3>
+                <button onclick="hideStats()" class="text-gray-400">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div class="grid grid-cols-2 gap-4 mb-6">
+                <div class="bg-gray-50 rounded-xl p-4">
+                    <div class="text-sm text-gray-500">本月发起</div>
+                    <div class="text-xl font-medium mt-2">3,580 USDT</div>
+                    <div class="text-xs text-gray-400 mt-1">
+                        <i class="fas fa-arrow-up text-green-500"></i>
+                        较上月 +15.2%
+                    </div>
+                </div>
+                <div class="bg-gray-50 rounded-xl p-4">
+                    <div class="text-sm text-gray-500">本月收到</div>
+                    <div class="text-xl font-medium mt-2">2,890 USDT</div>
+                    <div class="text-xs text-gray-400 mt-1">
+                        <i class="fas fa-arrow-down text-red-500"></i>
+                        较上月 -8.5%
+                    </div>
+                </div>
+            </div>
+            
+            <div class="space-y-4">
+                <div class="flex justify-between items-center">
+                    <span class="text-sm text-gray-500">最常转账群聊</span>
+                    <span class="text-sm text-primary-500">查看更多</span>
+                </div>
+                <div class="space-y-3">
+                    <div class="flex items-center">
+                        <div class="group-avatar w-8 h-8 text-sm mr-3">币</div>
+                        <div class="flex-1">
+                            <div class="text-sm font-medium">Web3创业者交流群</div>
+                            <div class="text-xs text-gray-500">共计 12,580 USDT</div>
+                        </div>
+                        <div class="text-sm text-gray-400">35次</div>
+                    </div>
+                    <div class="flex items-center">
+                        <div class="group-avatar w-8 h-8 text-sm mr-3 from-green-500 to-green-600">创</div>
+                        <div class="flex-1">
+                            <div class="text-sm font-medium">创新技术研究群</div>
+                            <div class="text-xs text-gray-500">共计 8,920 USDT</div>
+                        </div>
+                        <div class="text-sm text-gray-400">28次</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showStats() {
+            document.getElementById('statsModal').classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function hideStats() {
+            document.getElementById('statsModal').classList.add('hidden');
+            document.body.style.overflow = 'auto';
+        }
+
+        // 添加滑动关闭弹窗
+        let startY = 0;
+        const modal = document.getElementById('statsModal');
+        const modalContent = modal.querySelector('.bg-white');
+
+        modalContent.addEventListener('touchstart', (e) => {
+            startY = e.touches[0].clientY;
+        });
+
+        modalContent.addEventListener('touchmove', (e) => {
+            const deltaY = e.touches[0].clientY - startY;
+            if (deltaY > 0) {
+                modalContent.style.transform = `translateY(${deltaY}px)`;
+            }
+        });
+
+        modalContent.addEventListener('touchend', (e) => {
+            const deltaY = e.changedTouches[0].clientY - startY;
+            if (deltaY > 100) {
+                hideStats();
+            }
+            modalContent.style.transform = '';
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>全部账单</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .bill-item {
+            @apply flex items-center p-4 border-b border-gray-100;
+        }
+        
+        .bill-icon {
+            @apply w-10 h-10 rounded-full flex items-center justify-center text-white text-lg mr-3;
+        }
+        
+        .bill-info {
+            @apply flex-1;
+        }
+        
+        .bill-amount {
+            @apply text-right;
+        }
+        
+        .amount-plus {
+            @apply text-green-500;
+        }
+        
+        .amount-minus {
+            @apply text-red-500;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- 搜索栏 -->
+    <div class="p-4 bg-white sticky top-0 z-10">
+        <div class="flex items-center bg-gray-100 rounded-full p-2">
+            <i class="fas fa-search text-gray-400 mx-2"></i>
+            <input type="text" 
+                   placeholder="搜索交易对象/备注" 
+                   class="bg-transparent flex-1 outline-none text-sm">
+        </div>
+    </div>
+
+    <!-- 筛选栏 -->
+    <div class="flex p-4 text-sm text-gray-600">
+        <div class="flex items-center mr-4">
+            <span>时间</span>
+            <i class="fas fa-chevron-down ml-1"></i>
+        </div>
+        <div class="flex items-center mr-4">
+            <span>金额</span>
+            <i class="fas fa-chevron-down ml-1"></i>
+        </div>
+        <div class="flex items-center">
+            <span>状态</span>
+            <i class="fas fa-chevron-down ml-1"></i>
+        </div>
+    </div>
+
+    <!-- 账单列表 -->
+    <div class="bill-list bg-white">
+        <!-- 日期分组 -->
+        <div class="text-sm text-gray-500 p-2 bg-gray-50">2024年3月</div>
+        
+        <!-- 账单项目 -->
+        <div class="bill-item">
+            <div class="bill-icon bg-blue-500">
+                <i class="fas fa-exchange-alt"></i>
+            </div>
+            <div class="bill-info">
+                <div class="flex justify-between">
+                    <div class="font-medium">私聊转账</div>
+                    <div class="amount-minus">-500 USDT</div>
+                </div>
+                <div class="flex justify-between mt-1">
+                    <div class="text-sm text-gray-500">转账给：张三</div>
+                    <div class="text-sm text-gray-500">≈-3625.00 CNY</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 更多账单项目 -->
+        <!-- ... -->
+    </div>
+</body>
+</html>

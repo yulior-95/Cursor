@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>购买记录</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .order-status {
+            @apply text-xs px-2 py-1 rounded-full;
+        }
+        
+        .status-completed {
+            @apply bg-green-50 text-green-600;
+        }
+        
+        .status-pending {
+            @apply bg-yellow-50 text-yellow-600;
+        }
+        
+        .status-cancelled {
+            @apply bg-gray-50 text-gray-600;
+        }
+        
+        .merchant-badge {
+            @apply text-xs bg-blue-50 text-blue-600 px-2 py-0.5 rounded;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- 统计面板 -->
+    <div class="grid grid-cols-2 gap-4 p-4">
+        <div class="bg-white rounded-xl p-4">
+            <div class="text-sm text-gray-500">今日购买</div>
+            <div class="text-xl font-medium mt-2">5,280.00 USDT</div>
+            <div class="text-xs text-gray-400 mt-1">
+                <i class="fas fa-arrow-up text-green-500"></i>
+                较昨日 +12.5%
+            </div>
+        </div>
+        <div class="bg-white rounded-xl p-4">
+            <div class="text-sm text-gray-500">平均单价</div>
+            <div class="text-xl font-medium mt-2">7.25 CNY</div>
+            <div class="text-xs text-gray-400 mt-1">
+                <i class="fas fa-arrow-down text-red-500"></i>
+                较昨日 -0.8%
+            </div>
+        </div>
+    </div>
+
+    <!-- 订单列表 -->
+    <div class="bg-white mt-4">
+        <!-- 订单项目 -->
+        <div class="p-4 border-b border-gray-100">
+            <div class="flex justify-between items-start">
+                <div>
+                    <div class="flex items-center">
+                        <span class="font-medium">购买 USDT</span>
+                        <span class="order-status status-completed ml-2">已完成</span>
+                    </div>
+                    <div class="flex items-center mt-2">
+                        <span class="text-sm text-gray-500">商家：王大户</span>
+                        <span class="merchant-badge ml-2">认证商家</span>
+                    </div>
+                    <div class="text-sm text-gray-500 mt-2">
+                        订单号：TO2024030512345
+                    </div>
+                </div>
+                <div class="text-right">
+                    <div class="font-medium">1,000.00 USDT</div>
+                    <div class="text-sm text-gray-500 mt-1">
+                        单价：7.25 CNY
+                    </div>
+                    <div class="text-sm text-primary-500 mt-1">
+                        支付：7,250.00 CNY
+                    </div>
+                </div>
+            </div>
+            <div class="flex justify-between items-center mt-4 pt-4 border-t border-gray-100">
+                <div class="text-xs text-gray-400">
+                    2024-03-05 14:30:25
+                </div>
+                <div class="space-x-2">
+                    <button class="px-3 py-1 text-sm border border-gray-200 rounded">
+                        查看详情
+                    </button>
+                    <button class="px-3 py-1 text-sm bg-primary-500 text-white rounded">
+                        再次购买
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 更多订单 -->
+        <div class="p-4 border-b border-gray-100">
+            <div class="flex justify-between items-start">
+                <div>
+                    <div class="flex items-center">
+                        <span class="font-medium">购买 USDT</span>
+                        <span class="order-status status-pending ml-2">待支付</span>
+                    </div>
+                    <div class="flex items-center mt-2">
+                        <span class="text-sm text-gray-500">商家：李老板</span>
+                        <span class="merchant-badge ml-2">认证商家</span>
+                    </div>
+                    <div class="text-sm text-gray-500 mt-2">
+                        订单号：TO2024030512346
+                    </div>
+                </div>
+                <div class="text-right">
+                    <div class="font-medium">500.00 USDT</div>
+                    <div class="text-sm text-gray-500 mt-1">
+                        单价：7.26 CNY
+                    </div>
+                    <div class="text-sm text-primary-500 mt-1">
+                        支付：3,630.00 CNY
+                    </div>
+                </div>
+            </div>
+            <div class="flex justify-between items-center mt-4 pt-4 border-t border-gray-100">
+                <div class="text-xs text-gray-400">
+                    2024-03-05 14:35:12
+                </div>
+                <div class="space-x-2">
+                    <button class="px-3 py-1 text-sm border border-gray-200 rounded">
+                        取消订单
+                    </button>
+                    <button class="px-3 py-1 text-sm bg-primary-500 text-white rounded">
+                        去支付
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 筛选浮动按钮 -->
+    <div class="fixed bottom-20 right-4">
+        <button class="w-12 h-12 rounded-full bg-white shadow-lg flex items-center justify-center">
+            <i class="fas fa-filter text-gray-600"></i>
+        </button>
+    </div>
+
+    <script>
+        // 添加点击效果
+        document.querySelectorAll('button').forEach(button => {
+            button.addEventListener('click', function() {
+                this.style.transform = 'scale(0.95)';
+                setTimeout(() => {
+                    this.style.transform = 'scale(1)';
+                }, 100);
+            });
+        });
+    </script>
+</body>
+</html>

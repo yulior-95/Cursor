@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>线下转账</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .payment-method {
+            @apply text-xs px-2 py-1 rounded-full;
+        }
+        
+        .method-bank {
+            @apply bg-blue-50 text-blue-600;
+        }
+        
+        .method-alipay {
+            @apply bg-blue-50 text-blue-600;
+        }
+        
+        .method-wechat {
+            @apply bg-green-50 text-green-600;
+        }
+        
+        .bank-logo {
+            @apply w-8 h-8 rounded-lg flex items-center justify-center text-white text-sm font-medium;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- 月度统计卡片 -->
+    <div class="m-4 bg-white rounded-xl p-4">
+        <div class="flex items-center justify-between mb-4">
+            <div class="text-sm text-gray-500">2024年3月</div>
+            <button class="text-sm text-primary-500">
+                <i class="fas fa-calendar-alt mr-1"></i>
+                切换月份
+            </button>
+        </div>
+        
+        <div class="grid grid-cols-2 gap-4">
+            <div>
+                <div class="text-2xl font-medium">23,580.50</div>
+                <div class="text-sm text-gray-500 mt-1">买入 USDT</div>
+                <div class="text-xs text-gray-400 mt-1">
+                    <i class="fas fa-arrow-up text-green-500"></i>
+                    较上月 +18.5%
+                </div>
+            </div>
+            <div>
+                <div class="text-2xl font-medium">18,920.30</div>
+                <div class="text-sm text-gray-500 mt-1">卖出 USDT</div>
+                <div class="text-xs text-gray-400 mt-1">
+                    <i class="fas fa-arrow-down text-red-500"></i>
+                    较上月 -12.3%
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 交易记录列表 -->
+    <div class="bg-white">
+        <!-- 日期分组 -->
+        <div class="text-sm text-gray-500 p-3 bg-gray-50">今天</div>
+        
+        <!-- 交易记录 -->
+        <div class="p-4 border-b border-gray-100">
+            <div class="flex items-start">
+                <div class="bank-logo bg-red-500 mr-3">工</div>
+                <div class="flex-1">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <div class="font-medium">买入 USDT</div>
+                            <div class="flex items-center mt-1">
+                                <span class="payment-method method-bank">工商银行</span>
+                                <span class="text-sm text-gray-500 ml-2">尾号3349</span>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <div class="text-green-500 font-medium">+1,000 USDT</div>
+                            <div class="text-xs text-gray-500 mt-1">
+                                支付：7,250.00 CNY
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="flex justify-between items-center mt-3">
+                        <div class="text-sm text-gray-500">
+                            交易号：OT202403051234
+                        </div>
+                        <div class="text-xs text-gray-400">14:30</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="p-4 border-b border-gray-100">
+            <div class="flex items-start">
+                <div class="bank-logo bg-blue-500 mr-3">
+                    <i class="fab fa-alipay"></i>
+                </div>
+                <div class="flex-1">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <div class="font-medium">卖出 USDT</div>
+                            <div class="flex items-center mt-1">
+                                <span class="payment-method method-alipay">支付宝</span>
+                                <span class="text-sm text-gray-500 ml-2">张三</span>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <div class="text-red-500 font-medium">-500 USDT</div>
+                            <div class="text-xs text-gray-500 mt-1">
+                                收款：3,625.00 CNY
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="flex justify-between items-center mt-3">
+                        <div class="text-sm text-gray-500">
+                            交易号：OT202403051235
+                        </div>
+                        <div class="text-xs text-gray-400">11:25</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 筛选面板触发器 -->
+    <div class="fixed bottom-20 right-4 flex flex-col space-y-2">
+        <button class="w-12 h-12 rounded-full bg-white shadow-lg flex items-center justify-center" onclick="toggleFilter()">
+            <i class="fas fa-filter text-gray-600"></i>
+        </button>
+    </div>
+
+    <!-- 筛选面板 -->
+    <div id="filterPanel" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50">
+        <div class="absolute bottom-0 left-0 right-0 bg-white rounded-t-2xl p-6">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-lg font-medium">筛选</h3>
+                <button onclick="toggleFilter()" class="text-gray-400">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div class="space-y-6">
+                <div>
+                    <div class="text-sm text-gray-500 mb-3">交易类型</div>
+                    <div class="grid grid-cols-2 gap-3">
+                        <button class="py-2 px-4 rounded-lg bg-primary-50 text-primary-500 text-sm font-medium">
+                            买入
+                        </button>
+                        <button class="py-2 px-4 rounded-lg bg-gray-100 text-gray-600 text-sm">
+                            卖出
+                        </button>
+                    </div>
+                </div>
+                
+                <div>
+                    <div class="text-sm text-gray-500 mb-3">支付方式</div>
+                    <div class="grid grid-cols-3 gap-3">
+                        <button class="py-2 px-4 rounded-lg bg-primary-50 text-primary-500 text-sm font-medium">
+                            全部
+                        </button>
+                        <button class="py-2 px-4 rounded-lg bg-gray-100 text-gray-600 text-sm">
+                            银行卡
+                        </button>
+                        <button class="py-2 px-4 rounded-lg bg-gray-100 text-gray-600 text-sm">
+                            支付宝
+                        </button>
+                        <button class="py-2 px-4 rounded-lg bg-gray-100 text-gray-600 text-sm">
+                            微信
+                        </button>
+                    </div>
+                </div>
+                
+                <div>
+                    <div class="text-sm text-gray-500 mb-3">时间范围</div>
+                    <div class="grid grid-cols-2 gap-3">
+                        <input type="date" class="py-2 px-4 rounded-lg border border-gray-200 text-sm">
+                        <input type="date" class="py-2 px-4 rounded-lg border border-gray-200 text-sm">
+                    </div>
+                </div>
+                
+                <div class="pt-4">
+                    <button class="w-full py-3 bg-primary-500 text-white rounded-lg font-medium">
+                        确定
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function toggleFilter() {
+            const panel = document.getElementById('filterPanel');
+            panel.classList.toggle('hidden');
+            document.body.style.overflow = panel.classList.contains('hidden') ? 'auto' : 'hidden';
+        }
+
+        // 筛选面板滑动关闭
+        const panel = document.querySelector('#filterPanel .bg-white');
+        let startY = 0;
+
+        panel.addEventListener('touchstart', (e) => {
+            startY = e.touches[0].clientY;
+        });
+
+        panel.addEventListener('touchmove', (e) => {
+            const deltaY = e.touches[0].clientY - startY;
+            if (deltaY > 0) {
+                panel.style.transform = `translateY(${deltaY}px)`;
+            }
+        });
+
+        panel.addEventListener('touchend', (e) => {
+            const deltaY = e.changedTouches[0].clientY - startY;
+            if (deltaY > 100) {
+                toggleFilter();
+            }
+            panel.style.transform = '';
+        });
+    </script>
+</body>
+</html>

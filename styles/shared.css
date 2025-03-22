@@ -1,0 +1,116 @@
+:root {
+    /* 主题色 */
+    --primary-50: #e6f0ff;
+    --primary-100: #bdd6fe;
+    --primary-500: #4080ff;
+    --primary-600: #2563eb;
+    --primary-700: #1d4ed8;
+    
+    /* 功能色 */
+    --success-50: #ecfdf5;
+    --success-500: #22c55e;
+    --warning-50: #fff7ed;
+    --warning-500: #f97316;
+    --danger-50: #fef2f2;
+    --danger-500: #ef4444;
+    
+    /* 中性色 */
+    --gray-50: #f9fafb;
+    --gray-100: #f3f4f6;
+    --gray-200: #e5e7eb;
+    --gray-300: #d1d5db;
+    --gray-400: #9ca3af;
+    --gray-500: #6b7280;
+    --gray-600: #4b5563;
+    --gray-700: #374151;
+    --gray-800: #1f2937;
+    --gray-900: #111827;
+}
+
+/* 动画 */
+@keyframes slideUp {
+    from { transform: translateY(100%); }
+    to { transform: translateY(0); }
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+/* 共享组件样式 */
+.page-container {
+    min-height: 100vh;
+    background-color: var(--gray-50);
+}
+
+.nav-header {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background-color: white;
+    border-bottom: 1px solid var(--gray-200);
+}
+
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    animation: fadeIn 0.3s ease;
+}
+
+.modal-content {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: white;
+    border-top-left-radius: 1rem;
+    border-top-right-radius: 1rem;
+    animation: slideUp 0.3s ease;
+}
+
+/* 骨架屏动画 */
+.skeleton {
+    background: linear-gradient(
+        90deg,
+        var(--gray-100) 25%,
+        var(--gray-200) 37%,
+        var(--gray-100) 63%
+    );
+    background-size: 400% 100%;
+    animation: skeleton-loading 1.4s ease infinite;
+}
+
+@keyframes skeleton-loading {
+    0% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0 50%;
+    }
+}
+
+/* 下拉刷新 */
+.pull-refresh-indicator {
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--gray-500);
+    font-size: 0.875rem;
+    transform-origin: top;
+    transition: transform 0.2s;
+}
+
+/* 虚拟滚动容器 */
+.virtual-scroll-container {
+    height: calc(100vh - 120px);
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+}

@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=414, height=896, initial-scale=1, viewport-fit=cover">
+    <title>账单记录</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --safe-area-inset-top: env(safe-area-inset-top);
+            --safe-area-inset-bottom: env(safe-area-inset-bottom);
+            --primary-color: #007AFF;
+            --success-color: #34C759;
+            --warning-color: #FF9500;
+            --danger-color: #FF3B30;
+            --background-color: #F2F2F7;
+            --text-primary: #000000;
+            --text-secondary: #666666;
+            --text-tertiary: #999999;
+        }
+
+        body {
+            width: 414px;
+            height: 896px;
+            margin: 0 auto;
+            background-color: var(--background-color);
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro", "SF Pro Display", "Helvetica Neue", sans-serif;
+            -webkit-font-smoothing: antialiased;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .device-frame {
+            width: 414px;
+            height: 896px;
+            position: relative;
+            background: var(--background-color);
+            overflow: hidden;
+        }
+
+        .status-bar {
+            height: 44px;
+            padding-top: var(--safe-area-inset-top, 44px);
+            background: var(--background-color);
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .nav-bar {
+            height: 44px;
+            background: var(--background-color);
+            position: relative;
+            z-index: 100;
+        }
+
+        .tab-container {
+            height: 44px;
+            background: var(--background-color);
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            border-bottom: 1px solid rgba(0,0,0,0.1);
+        }
+
+        .tab-container::-webkit-scrollbar {
+            display: none;
+        }
+
+        .tab-item {
+            padding: 12px 16px;
+            font-size: 15px;
+            color: var(--text-secondary);
+            position: relative;
+            white-space: nowrap;
+        }
+
+        .tab-item.active {
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+
+        .tab-item.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 16px;
+            right: 16px;
+            height: 2px;
+            background: var(--primary-color);
+            border-radius: 1px;
+        }
+
+        .content-container {
+            height: calc(100% - 132px); /* 总高度减去状态栏+导航栏+标签栏 */
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+            padding-bottom: calc(34px + var(--safe-area-inset-bottom, 0px));
+        }
+
+        .bill-item {
+            background: white;
+            padding: 16px;
+            margin-bottom: 1px;
+            display: flex;
+            align-items: center;
+        }
+
+        .bill-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            margin-right: 12px;
+            font-size: 20px;
+        }
+
+        .amount-positive {
+            color: var(--success-color);
+            font-weight: 600;
+        }
+
+        .amount-negative {
+            color: var(--danger-color);
+            font-weight: 600;
+        }
+
+        .home-indicator {
+            position: fixed;
+            bottom: 8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 134px;
+            height: 5px;
+            background: #000;
+            border-radius: 3px;
+            opacity: 0.3;
+        }
+
+        .filter-button {
+            position: fixed;
+            bottom: calc(34px + var(--safe-area-inset-bottom, 0px));
+            right: 16px;
+            width: 52px;
+            height: 52px;
+            border-radius: 26px;
+            background: white;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            color: var(--primary-color);
+            z-index: 100;
+        }
+
+        /* 日期分组样式 */
+        .date-group {
+            padding: 10px 16px;
+            font-size: 13px;
+            color: var(--text-tertiary);
+            font-weight: 600;
+            background: var(--background-color);
+        }
+
+        /* 金额样式 */
+        .amount {
+            font-size: 17px;
+            font-weight: 600;
+            font-feature-settings: "tnum";
+        }
+
+        .amount-converted {
+            font-size: 13px;
+            color: var(--text-tertiary);
+            font-feature-settings: "tnum";
+        }
+
+        /* 交易信息样式 */
+        .transaction-title {
+            font-size: 17px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .transaction-subtitle {
+            font-size: 15px;
+            color: var(--text-secondary);
+            margin-top: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="device-frame">
+        <!-- 状态栏 -->
+        <div class="status-bar px-4 flex justify-between items-center">
+            <div>9:41</div>
+            <div class="flex space-x-2">
+                <span>●●●</span>
+                <span>📶</span>
+                <span>🔋</span>
+            </div>
+        </div>
+
+        <!-- 导航栏 -->
+        <div class="nav-bar px-4 flex items-center justify-between">
+            <div class="flex items-center">
+                <button class="mr-3" style="color: var(--primary-color)">
+                    <i class="fas fa-chevron-left text-xl"></i>
+                </button>
+                <span class="text-[17px] font-semibold">账单记录</span>
+            </div>
+            <button style="color: var(--primary-color)">
+                <i class="fas fa-search text-xl"></i>
+            </button>
+        </div>
+
+        <!-- Tab栏 -->
+        <div class="tab-container">
+            <div class="flex px-2">
+                <button class="tab-item active">全部</button>
+                <button class="tab-item">私聊转账</button>
+                <button class="tab-item">群聊转账</button>
+                <button class="tab-item">红包</button>
+                <button class="tab-item">线上转账</button>
+                <button class="tab-item">线下转账</button>
+                <button class="tab-item">购买</button>
+                <button class="tab-item">出售</button>
+            </div>
+        </div>
+
+        <!-- 内容区域 -->
+        <div class="content-container">
+            <!-- 日期分组 -->
+            <div class="date-group">今天</div>
+
+            <!-- 账单项目 -->
+            <div class="bill-item">
+                <div class="bill-icon" style="background: var(--primary-color)">
+                    <i class="fas fa-exchange-alt"></i>
+                </div>
+                <div class="flex-1">
+                    <div class="flex justify-between items-center">
+                        <span class="transaction-title">转账</span>
+                        <span class="amount amount-negative">-500 USDT</span>
+                    </div>
+                    <div class="flex justify-between mt-1">
+                        <span class="transaction-subtitle">转给：张三</span>
+                        <span class="amount-converted">≈-3625.00 CNY</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bill-item">
+                <div class="bill-icon" style="background: var(--danger-color)">
+                    <i class="fas fa-envelope"></i>
+                </div>
+                <div class="flex-1">
+                    <div class="flex justify-between items-center">
+                        <span class="transaction-title">红包</span>
+                        <span class="amount amount-positive">+200 USDT</span>
+                    </div>
+                    <div class="flex justify-between mt-1">
+                        <span class="transaction-subtitle">来自：李四</span>
+                        <span class="amount-converted">≈+1450.00 CNY</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 日期分组 -->
+            <div class="date-group">昨天</div>
+
+            <div class="bill-item">
+                <div class="bill-icon" style="background: var(--success-color)">
+                    <i class="fas fa-shopping-cart"></i>
+                </div>
+                <div class="flex-1">
+                    <div class="flex justify-between items-center">
+                        <span class="transaction-title">购买</span>
+                        <span class="amount amount-negative">-1000 USDT</span>
+                    </div>
+                    <div class="flex justify-between mt-1">
+                        <span class="transaction-subtitle">通过：银行卡</span>
+                        <span class="amount-converted">≈-7250.00 CNY</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Home Indicator -->
+        <div class="home-indicator"></div>
+
+        <!-- 筛选按钮 -->
+        <button class="filter-button">
+            <i class="fas fa-filter"></i>
+        </button>
+    </div>
+
+    <script>
+        // Tab切换
+        document.querySelectorAll('.tab-item').forEach(tab => {
+            tab.addEventListener('click', () => {
+                document.querySelectorAll('.tab-item').forEach(t => {
+                    t.classList.remove('active');
+                });
+                tab.classList.add('active');
+            });
+        });
+    </script>
+</body>
+</html>

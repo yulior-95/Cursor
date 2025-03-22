@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>私聊转账</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .pull-refresh {
+            @apply flex items-center justify-center text-gray-400 text-sm py-3;
+        }
+        
+        .transaction-avatar {
+            @apply w-10 h-10 rounded-full bg-cover bg-center;
+        }
+        
+        .status-tag {
+            @apply text-xs px-2 py-1 rounded;
+        }
+        
+        .status-success {
+            @apply bg-green-50 text-green-600;
+        }
+        
+        .animate-spin {
+            animation: spin 1s linear infinite;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- 下拉刷新区域 -->
+    <div class="pull-refresh">
+        <i class="fas fa-spinner animate-spin mr-2"></i>
+        下拉刷新
+    </div>
+
+    <!-- 搜索和筛选 -->
+    <div class="sticky top-0 z-10 bg-white shadow-sm">
+        <!-- 搜索框 -->
+        <div class="p-4">
+            <div class="flex items-center bg-gray-100 rounded-full p-2">
+                <i class="fas fa-search text-gray-400 mx-2"></i>
+                <input type="text" 
+                       placeholder="搜索转账对象/备注" 
+                       class="bg-transparent flex-1 outline-none text-sm">
+            </div>
+        </div>
+
+        <!-- 筛选条件 -->
+        <div class="flex p-4 text-sm border-t border-gray-100">
+            <div class="flex-1 flex justify-center items-center">
+                <span>时间</span>
+                <i class="fas fa-chevron-down ml-1 text-gray-400"></i>
+            </div>
+            <div class="flex-1 flex justify-center items-center">
+                <span>金额</span>
+                <i class="fas fa-chevron-down ml-1 text-gray-400"></i>
+            </div>
+            <div class="flex-1 flex justify-center items-center">
+                <span>收支</span>
+                <i class="fas fa-chevron-down ml-1 text-gray-400"></i>
+            </div>
+        </div>
+    </div>
+
+    <!-- 交易列表 -->
+    <div class="transaction-list">
+        <!-- 日期分组 -->
+        <div class="text-sm text-gray-500 p-3 bg-gray-50">今天</div>
+        
+        <!-- 交易项目 -->
+        <div class="bg-white p-4 flex items-center border-b border-gray-100">
+            <div class="transaction-avatar mr-3" 
+                 style="background-image: url('https://via.placeholder.com/40')"></div>
+            <div class="flex-1">
+                <div class="flex justify-between items-center">
+                    <span class="font-medium">张三</span>
+                    <span class="text-red-500">-500 USDT</span>
+                </div>
+                <div class="flex justify-between items-center mt-1">
+                    <div class="text-sm text-gray-500">
+                        <span class="status-tag status-success">已完成</span>
+                        <span class="ml-2">12:30</span>
+                    </div>
+                    <span class="text-sm text-gray-500">≈-3625.00 CNY</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 更多交易项目 -->
+        <div class="bg-white p-4 flex items-center border-b border-gray-100">
+            <div class="transaction-avatar mr-3" 
+                 style="background-image: url('https://via.placeholder.com/40')"></div>
+            <div class="flex-1">
+                <div class="flex justify-between items-center">
+                    <span class="font-medium">李四</span>
+                    <span class="text-green-500">+1000 USDT</span>
+                </div>
+                <div class="flex justify-between items-center mt-1">
+                    <div class="text-sm text-gray-500">
+                        <span class="status-tag status-success">已完成</span>
+                        <span class="ml-2">10:15</span>
+                    </div>
+                    <span class="text-sm text-gray-500">≈+7250.00 CNY</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 日期分组 -->
+        <div class="text-sm text-gray-500 p-3 bg-gray-50">昨天</div>
+        
+        <!-- 更多交易记录 -->
+    </div>
+
+    <!-- 加载更多 -->
+    <div class="text-center text-sm text-gray-400 py-4">
+        <span>加载更多</span>
+    </div>
+
+    <script>
+        // 下拉刷新逻辑
+        let startY = 0;
+        const pullRefresh = document.querySelector('.pull-refresh');
+        
+        document.addEventListener('touchstart', (e) => {
+            startY = e.touches[0].pageY;
+        });
+
+        document.addEventListener('touchmove', (e) => {
+            const moveY = e.touches[0].pageY;
+            const distance = moveY - startY;
+            
+            if (distance > 0 && window.scrollY <= 0) {
+                pullRefresh.style.height = `${Math.min(distance, 60)}px`;
+                e.preventDefault();
+            }
+        });
+
+        document.addEventListener('touchend', () => {
+            if (pullRefresh.style.height) {
+                // 执行刷新逻辑
+                pullRefresh.style.height = '40px';
+                setTimeout(() => {
+                    pullRefresh.style.height = '0';
+                }, 1000);
+            }
+        });
+
+        // 无限滚动加载
+        window.addEventListener('scroll', () => {
+            const scrollHeight = document.documentElement.scrollHeight;
+            const scrollTop = document.documentElement.scrollTop;
+            const clientHeight = document.documentElement.clientHeight;
+            
+            if (scrollTop + clientHeight >= scrollHeight - 50) {
+                // 触发加载更多
+                console.log('加载更多数据');
+            }
+        });
+    </script>
+</body>
+</html>
