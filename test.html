@@ -207,7 +207,7 @@
         <!-- 导航栏 -->
         <div class="nav-bar px-4 flex items-center justify-between">
             <div class="flex items-center">
-                <button class="mr-3" style="color: var(--primary-color)">
+                <button class="mr-3" style="color: var(--primary-color)" onclick="goBack()">
                     <i class="fas fa-chevron-left text-xl"></i>
                 </button>
                 <span class="text-[17px] font-semibold">账单记录</span>
@@ -220,14 +220,14 @@
         <!-- Tab栏 -->
         <div class="tab-container">
             <div class="flex px-2">
-                <button class="tab-item active">全部</button>
-                <button class="tab-item">私聊转账</button>
-                <button class="tab-item">群聊转账</button>
-                <button class="tab-item">红包</button>
-                <button class="tab-item">线上转账</button>
-                <button class="tab-item">线下转账</button>
-                <button class="tab-item">购买</button>
-                <button class="tab-item">出售</button>
+                <button class="tab-item active" onclick="loadPage('all.html')">全部</button>
+                <button class="tab-item" onclick="loadPage('private_transfer.html')">私聊转账</button>
+                <button class="tab-item" onclick="loadPage('group_transfer.html')">群聊转账</button>
+                <button class="tab-item" onclick="loadPage('red_packet.html')">红包</button>
+                <button class="tab-item" onclick="loadPage('online_transfer.html')">线上转账</button>
+                <button class="tab-item" onclick="loadPage('offline_transfer.html')">线下转账</button>
+                <button class="tab-item" onclick="loadPage('buy.html')">购买</button>
+                <button class="tab-item" onclick="loadPage('sell.html')">出售</button>
             </div>
         </div>
 
@@ -308,6 +308,26 @@
                 tab.classList.add('active');
             });
         });
+        // 加载页面内容
+        function loadPage(page) {
+            fetch(page)
+                .then(response => response.text())
+                .then(data => {
+                    document.getElementById('page-content').innerHTML = data;
+                    document.querySelectorAll('.tab-item').forEach(t => t.classList.remove('active'));
+                    document.querySelector(`.tab-item[onclick="loadPage('${page}')"]`).classList.add('active');
+                })
+                .catch(error => console.error('Error loading page:', error));
+        }
+
+        // 返回按钮功能
+        function goBack() {
+            // 这里可以实现返回功能，比如返回到上一个页面
+            window.history.back();
+        }
+
+        // 默认加载全部账单
+        loadPage('all.html');
     </script>
 </body>
 </html>

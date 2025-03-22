@@ -2,11 +2,11 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=414, height=896, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="theme-color" content="#f5f5f7">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="format-detection" content="telephone=no">
-    <title>加密货币IM应用</title>
+    <title>加密货币IM应用展示</title>
     <style>
         * {
             margin: 0;
@@ -26,32 +26,76 @@
             --text-secondary: #666666;
             --text-tertiary: #999999;
             --border-color: #f0f0f0;
-        }
-        
-        html, body {
-            height: 896px;
-            width: 414px;
-            margin: 0 auto;
-            overflow: hidden;
-            position: relative;
+            --phone-frame-color: #222222;
         }
         
         body {
+            background-color: #f0f0f0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        /* 手机外框 */
+        .phone-frame {
+            width: 454px; /* 414px + 20px边框 */
+            height: 936px; /* 896px + 20px边框 */
+            background-color: var(--phone-frame-color);
+            border-radius: 36px;
+            padding: 20px 0;
+            position: relative;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+            overflow: hidden;
+        }
+        
+        /* 手机顶部摄像头和扬声器 */
+        .phone-top {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 150px;
+            height: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .phone-speaker {
+            width: 60px;
+            height: 6px;
+            background-color: #333;
+            border-radius: 3px;
+            margin: 0 10px;
+        }
+        
+        .phone-camera {
+            width: 10px;
+            height: 10px;
+            background-color: #333;
+            border-radius: 50%;
+            margin-right: 5px;
+        }
+        
+        /* 手机内容区域 */
+        .phone-content {
+            width: 414px;
+            height: 896px;
             background-color: var(--background-color);
-            color: var(--text-primary);
-            line-height: 1.4;
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
+            overflow: hidden;
+            position: relative;
+            margin: 0 auto;
         }
         
         /* 状态栏 */
         .status-bar {
             display: flex;
             justify-content: space-between;
-            padding: 10px 16px;
+            padding: 10px 15px;
             font-weight: bold;
             font-size: 14px;
-            height: 36px;
             background-color: var(--background-color);
             position: sticky;
             top: 0;
@@ -66,7 +110,7 @@
         /* 页面容器 */
         .page-container {
             position: relative;
-            height: 800px; /* 896 - 36(状态栏) - 60(底部导航栏) */
+            height: calc(100% - 120px); /* 减去状态栏和底部导航的高度 */
             overflow: hidden;
         }
         
@@ -76,7 +120,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            overflow: hidden;
+            overflow-y: auto;
             background-color: var(--background-color);
             transition: transform 0.3s ease;
             transform: translateX(100%);
@@ -93,14 +137,14 @@
         /* 用户信息 */
         .user-profile {
             display: flex;
-            padding: 12px 16px;
+            padding: 15px;
             align-items: center;
             position: relative;
         }
         
         .avatar {
-            width: 60px;
-            height: 60px;
+            width: 80px;
+            height: 80px;
             border-radius: 50%;
             background-color: #a8c0d6;
             position: relative;
@@ -113,6 +157,14 @@
             object-fit: cover;
         }
         
+        .avatar-small {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-color: #a8c0d6;
+            overflow: hidden;
+        }
+        
         .qr-code {
             position: absolute;
             right: 0;
@@ -120,16 +172,16 @@
             background-color: white;
             border-radius: 4px;
             padding: 2px;
-            font-size: 10px;
+            font-size: 12px;
         }
         
         .user-info {
-            margin-left: 12px;
+            margin-left: 15px;
             flex: 1;
         }
         
         .username {
-            font-size: 18px;
+            font-size: 22px;
             font-weight: bold;
             display: flex;
             align-items: center;
@@ -142,9 +194,9 @@
         }
         
         .user-id {
-            font-size: 12px;
+            font-size: 14px;
             color: var(--text-secondary);
-            margin-top: 3px;
+            margin-top: 5px;
             display: flex;
             align-items: center;
         }
@@ -154,26 +206,26 @@
             color: var(--primary-color);
             border: 1px solid var(--primary-color);
             border-radius: 4px;
-            padding: 1px;
-            font-size: 10px;
+            padding: 2px;
+            font-size: 12px;
         }
         
         .verification {
             position: absolute;
-            right: 16px;
-            top: 20px;
+            right: 15px;
+            top: 30px;
             background-color: var(--success-color);
             color: white;
-            padding: 3px 8px;
+            padding: 5px 10px;
             border-radius: 20px;
-            font-size: 12px;
+            font-size: 14px;
         }
         
         /* 功能按钮 */
         .function-buttons {
             display: flex;
             justify-content: space-around;
-            padding: 10px 10px 15px;
+            padding: 15px 10px 25px;
         }
         
         .function-button {
@@ -181,28 +233,29 @@
             flex-direction: column;
             align-items: center;
             width: 25%;
+            cursor: pointer;
         }
         
         .function-icon {
-            width: 40px;
-            height: 40px;
+            width: 50px;
+            height: 50px;
             display: flex;
             justify-content: center;
             align-items: center;
-            margin-bottom: 5px;
+            margin-bottom: 8px;
             position: relative;
         }
         
         .function-label {
-            font-size: 12px;
+            font-size: 14px;
         }
         
         .tag {
             position: absolute;
             top: -5px;
-            padding: 1px 6px;
-            border-radius: 10px;
-            font-size: 10px;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 12px;
             color: white;
         }
         
@@ -216,20 +269,20 @@
         
         /* 资产信息 */
         .assets {
-            padding: 10px 16px;
+            padding: 15px;
         }
         
         .total-assets {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 10px;
+            margin-bottom: 15px;
         }
         
         .assets-label {
             display: flex;
             align-items: center;
-            font-size: 14px;
+            font-size: 16px;
             font-weight: bold;
         }
         
@@ -240,7 +293,7 @@
         .assets-amount {
             display: flex;
             align-items: center;
-            font-size: 22px;
+            font-size: 28px;
             font-weight: bold;
             color: var(--primary-color);
         }
@@ -254,16 +307,16 @@
         .currency-card {
             background-color: var(--card-color);
             border-radius: 12px;
-            padding: 12px;
+            padding: 15px;
             display: flex;
             align-items: center;
-            margin-bottom: 10px;
+            margin-bottom: 15px;
             box-shadow: 0 1px 3px rgba(0,0,0,0.05);
         }
         
         .currency-icon {
-            width: 40px;
-            height: 40px;
+            width: 50px;
+            height: 50px;
             border-radius: 50%;
             background-color: #26de81;
             display: flex;
@@ -271,8 +324,8 @@
             align-items: center;
             color: white;
             font-weight: bold;
-            font-size: 18px;
-            margin-right: 12px;
+            font-size: 20px;
+            margin-right: 15px;
         }
         
         .currency-info {
@@ -280,7 +333,7 @@
         }
         
         .currency-name {
-            font-size: 16px;
+            font-size: 20px;
             font-weight: bold;
         }
         
@@ -288,12 +341,17 @@
             display: flex;
             align-items: center;
             color: var(--text-tertiary);
-            font-size: 12px;
-            margin-top: 3px;
+            font-size: 14px;
+            margin-top: 5px;
         }
         
         .down-arrow {
             color: var(--danger-color);
+            margin-left: 5px;
+        }
+        
+        .up-arrow {
+            color: var(--success-color);
             margin-left: 5px;
         }
         
@@ -302,15 +360,15 @@
         }
         
         .amount-value {
-            font-size: 18px;
+            font-size: 22px;
             font-weight: bold;
             color: var(--primary-color);
         }
         
         .amount-converted {
             color: var(--text-tertiary);
-            font-size: 12px;
-            margin-top: 3px;
+            font-size: 14px;
+            margin-top: 5px;
         }
         
         /* 收起按钮 */
@@ -318,34 +376,35 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: 5px 0;
+            padding: 10px 0;
             color: var(--primary-color);
-            font-size: 12px;
+            font-size: 14px;
         }
         
         /* 设置菜单 */
         .settings-menu {
-            margin-top: 10px;
+            margin-top: 15px;
+            margin-bottom: 70px; /* 为底部导航留出空间 */
         }
         
         .menu-item {
             display: flex;
             align-items: center;
-            padding: 10px 16px;
+            padding: 15px;
             background-color: var(--card-color);
             border-bottom: 1px solid var(--border-color);
         }
         
         .menu-icon {
-            width: 24px;
-            height: 24px;
-            border-radius: 6px;
+            width: 30px;
+            height: 30px;
+            border-radius: 8px;
             display: flex;
             justify-content: center;
             align-items: center;
-            margin-right: 12px;
+            margin-right: 15px;
             color: white;
-            font-size: 14px;
+            font-size: 18px;
         }
         
         .icon-payment {
@@ -374,7 +433,7 @@
         
         .menu-label {
             flex: 1;
-            font-size: 14px;
+            font-size: 16px;
         }
         
         .menu-arrow {
@@ -389,10 +448,9 @@
             right: 0;
             display: flex;
             background-color: var(--card-color);
-            padding: 8px 0 12px;
+            padding: 10px 0;
             border-top: 1px solid var(--border-color);
             z-index: 1000;
-            height: 60px;
             width: 414px;
             margin: 0 auto;
         }
@@ -408,7 +466,7 @@
         }
         
         .nav-icon {
-            margin-bottom: 3px;
+            margin-bottom: 5px;
             position: relative;
         }
         
@@ -423,8 +481,8 @@
             background-color: var(--danger-color);
             color: white;
             border-radius: 50%;
-            width: 16px;
-            height: 16px;
+            width: 18px;
+            height: 18px;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -437,52 +495,229 @@
             right: -2px;
             background-color: var(--danger-color);
             border-radius: 50%;
-            width: 6px;
-            height: 6px;
+            width: 8px;
+            height: 8px;
         }
         
         /* 底部安全区域 */
         .bottom-safe-area {
-            display: none; /* 移除底部安全区域以节省空间 */
-        }
-        
-        /* 设备模拟框 */
-        .device-frame {
+            height: 20px;
+            background-color: var(--card-color);
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            z-index: 999;
             width: 414px;
-            height: 896px;
-            margin: 20px auto;
-            border: 12px solid #111;
-            border-radius: 40px;
-            position: relative;
-            overflow: hidden;
-            box-shadow: 0 0 0 2px #ccc;
+            margin: 0 auto;
         }
         
-        .device-frame::before {
+        .home-indicator {
+            width: 30%;
+            height: 5px;
+            background-color: #000;
+            border-radius: 3px;
+            margin: 8px auto;
+        }
+        
+        /* 消息列表 */
+        .message-list {
+            background-color: var(--card-color);
+        }
+        
+        .message-item {
+            display: flex;
+            padding: 15px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .message-content {
+            flex: 1;
+            margin-left: 15px;
+        }
+        
+        .message-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+        }
+        
+        .message-name {
+            font-weight: bold;
+        }
+        
+        .message-time {
+            color: var(--text-tertiary);
+            font-size: 12px;
+        }
+        
+        .message-preview {
+            color: var(--text-secondary);
+            font-size: 14px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        /* 联系人列表 */
+        .contact-list {
+            background-color: var(--card-color);
+        }
+        
+        .contact-header {
+            padding: 10px 15px;
+            background-color: var(--background-color);
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+        
+        .contact-item {
+            display: flex;
+            padding: 15px;
+            border-bottom: 1px solid var(--border-color);
+            align-items: center;
+        }
+        
+        .contact-name {
+            flex: 1;
+            margin-left: 15px;
+            font-size: 16px;
+        }
+        
+        /* 通话列表 */
+        .call-list {
+            background-color: var(--card-color);
+        }
+        
+        .call-item {
+            display: flex;
+            padding: 15px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .call-info {
+            flex: 1;
+            margin-left: 15px;
+        }
+        
+        .call-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+        }
+        
+        .call-name {
+            font-weight: bold;
+        }
+        
+        .call-time {
+            color: var(--text-tertiary);
+            font-size: 12px;
+        }
+        
+        .call-type {
+            display: flex;
+            align-items: center;
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+        
+        .call-icon {
+            margin-right: 5px;
+        }
+        
+        .call-missed {
+            color: var(--danger-color);
+        }
+        
+        .call-outgoing {
+            color: var(--success-color);
+        }
+        
+        /* 搜索栏 */
+        .search-bar {
+            padding: 10px 15px;
+            background-color: var(--background-color);
+        }
+        
+        .search-input {
+            background-color: var(--card-color);
+            border-radius: 20px;
+            padding: 8px 15px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .search-icon {
+            color: var(--text-tertiary);
+            margin-right: 10px;
+        }
+        
+        .search-placeholder {
+            color: var(--text-tertiary);
+            font-size: 14px;
+        }
+        
+        /* 页面标题 */
+        .page-title {
+            padding: 15px;
+            font-size: 20px;
+            font-weight: bold;
+            background-color: var(--background-color);
+        }
+        
+        /* 动画效果 */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.3s ease;
+        }
+        
+        /* 账单图标高亮效果 */
+        .function-button:hover .function-icon,
+        .function-button:active .function-icon {
+            transform: scale(1.05);
+            transition: transform 0.2s ease;
+        }
+        
+        /* 账单图标特殊样式 */
+        .bill-icon {
+            position: relative;
+        }
+        
+        .bill-icon::after {
             content: "";
             position: absolute;
-            top: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 150px;
-            height: 30px;
-            background-color: #111;
-            border-bottom-left-radius: 15px;
-            border-bottom-right-radius: 15px;
-            z-index: 1000;
+            top: -5px;
+            right: -5px;
+            width: 10px;
+            height: 10px;
+            background-color: var(--danger-color);
+            border-radius: 50%;
+            animation: pulse 1.5s infinite;
         }
         
-        .device-content {
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
-            position: relative;
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.2); opacity: 0.7; }
+            100% { transform: scale(1); opacity: 1; }
         }
     </style>
 </head>
 <body>
-    <div class="device-frame">
-        <div class="device-content">
+    <!-- 手机外框 -->
+    <div class="phone-frame">
+        <!-- 手机顶部摄像头和扬声器 -->
+        <div class="phone-top">
+            <div class="phone-camera"></div>
+            <div class="phone-speaker"></div>
+        </div>
+        
+        <!-- 手机内容区域 -->
+        <div class="phone-content">
             <!-- 状态栏 -->
             <div class="status-bar">
                 <div>9:41</div>
@@ -495,12 +730,165 @@
             
             <!-- 页面容器 -->
             <div class="page-container">
+                <!-- 消息页面 -->
+                <div class="page" id="messages-page">
+                    <div class="page-title">消息</div>
+                    <div class="search-bar">
+                        <div class="search-input">
+                            <span class="search-icon">🔍</span>
+                            <span class="search-placeholder">搜索</span>
+                        </div>
+                    </div>
+                    <div class="message-list">
+                        <div class="message-item">
+                            <div class="avatar-small">
+                                <img src="/placeholder.svg?height=50&width=50" alt="联系人头像">
+                            </div>
+                            <div class="message-content">
+                                <div class="message-header">
+                                    <div class="message-name">张三</div>
+                                    <div class="message-time">09:30</div>
+                                </div>
+                                <div class="message-preview">你好，我想了解一下USDT的交易流程</div>
+                            </div>
+                        </div>
+                        <div class="message-item">
+                            <div class="avatar-small">
+                                <img src="/placeholder.svg?height=50&width=50" alt="联系人头像">
+                            </div>
+                            <div class="message-content">
+                                <div class="message-header">
+                                    <div class="message-name">李四</div>
+                                    <div class="message-time">昨天</div>
+                                </div>
+                                <div class="message-preview">已经转账了，请查收</div>
+                            </div>
+                        </div>
+                        <div class="message-item">
+                            <div class="avatar-small">
+                                <img src="/placeholder.svg?height=50&width=50" alt="联系人头像">
+                            </div>
+                            <div class="message-content">
+                                <div class="message-header">
+                                    <div class="message-name">王五</div>
+                                    <div class="message-time">昨天</div>
+                                </div>
+                                <div class="message-preview">最近比特币的行情怎么样？</div>
+                            </div>
+                        </div>
+                        <div class="message-item">
+                            <div class="avatar-small">
+                                <img src="/placeholder.svg?height=50&width=50" alt="联系人头像">
+                            </div>
+                            <div class="message-content">
+                                <div class="message-header">
+                                    <div class="message-name">系统通知</div>
+                                    <div class="message-time">周一</div>
+                                </div>
+                                <div class="message-preview">您的账户已完成初级认证</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 通讯录页面 -->
+                <div class="page" id="contacts-page">
+                    <div class="page-title">通讯录</div>
+                    <div class="search-bar">
+                        <div class="search-input">
+                            <span class="search-icon">🔍</span>
+                            <span class="search-placeholder">搜索</span>
+                        </div>
+                    </div>
+                    <div class="contact-list">
+                        <div class="contact-header">A</div>
+                        <div class="contact-item">
+                            <div class="avatar-small">
+                                <img src="/placeholder.svg?height=50&width=50" alt="联系人头像">
+                            </div>
+                            <div class="contact-name">阿里</div>
+                        </div>
+                        <div class="contact-header">B</div>
+                        <div class="contact-item">
+                            <div class="avatar-small">
+                                <img src="/placeholder.svg?height=50&width=50" alt="联系人头像">
+                            </div>
+                            <div class="contact-name">白云</div>
+                        </div>
+                        <div class="contact-header">C</div>
+                        <div class="contact-item">
+                            <div class="avatar-small">
+                                <img src="/placeholder.svg?height=50&width=50" alt="联系人头像">
+                            </div>
+                            <div class="contact-name">陈明</div>
+                        </div>
+                        <div class="contact-item">
+                            <div class="avatar-small">
+                                <img src="/placeholder.svg?height=50&width=50" alt="联系人头像">
+                            </div>
+                            <div class="contact-name">崔健</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 通话页面 -->
+                <div class="page" id="calls-page">
+                    <div class="page-title">通话</div>
+                    <div class="call-list">
+                        <div class="call-item">
+                            <div class="avatar-small">
+                                <img src="/placeholder.svg?height=50&width=50" alt="联系人头像">
+                            </div>
+                            <div class="call-info">
+                                <div class="call-header">
+                                    <div class="call-name">张三</div>
+                                    <div class="call-time">今天 09:30</div>
+                                </div>
+                                <div class="call-type">
+                                    <span class="call-icon call-missed">📞</span>
+                                    <span>未接来电</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="call-item">
+                            <div class="avatar-small">
+                                <img src="/placeholder.svg?height=50&width=50" alt="联系人头像">
+                            </div>
+                            <div class="call-info">
+                                <div class="call-header">
+                                    <div class="call-name">李四</div>
+                                    <div class="call-time">昨天 15:45</div>
+                                </div>
+                                <div class="call-type">
+                                    <span class="call-icon call-outgoing">📞</span>
+                                    <span>已拨电话 (3分钟)</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="call-item">
+                            <div class="avatar-small">
+                                <img src="/placeholder.svg?height=50&width=50" alt="联系人头像">
+                            </div>
+                            <div class="call-info">
+                                <div class="call-header">
+                                    <div class="call-name">王五</div>
+                                    <div class="call-time">周一 11:20</div>
+                                </div>
+                                <div class="call-type">
+                                    <span class="call-icon">📞</span>
+                                    <span>已接来电 (5分钟)</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
                 <!-- 我的页面 -->
                 <div class="page active" id="profile-page">
                     <!-- 用户信息 -->
                     <div class="user-profile">
                         <div class="avatar">
-                            <img src="/placeholder.svg?height=60&width=60" alt="用户头像">
+                            <img src="/placeholder.svg?height=80&width=80" alt="用户头像">
                             <div class="qr-code">🔍</div>
                         </div>
                         <div class="user-info">
@@ -534,8 +922,8 @@
                             </div>
                             <div class="function-label">转账</div>
                         </div>
-                        <div class="function-button">
-                            <div class="function-icon">
+                        <div class="function-button" onclick="window.location.href='test.html'">
+                            <div class="function-icon bill-icon">
                                 <span>📃</span>
                             </div>
                             <div class="function-label">账单</div>
@@ -565,6 +953,21 @@
                             <div class="currency-amount">
                                 <div class="amount-value">100</div>
                                 <div class="amount-converted">≈ ¥725.00</div>
+                            </div>
+                        </div>
+                        
+                        <!-- BTC卡片 -->
+                        <div class="currency-card">
+                            <div class="currency-icon" style="background-color: #f7931a;">₿</div>
+                            <div class="currency-info">
+                                <div class="currency-name">BTC</div>
+                                <div class="currency-rate">
+                                    198,450RMB <span class="up-arrow">▲</span>
+                                </div>
+                            </div>
+                            <div class="currency-amount">
+                                <div class="amount-value">0.05</div>
+                                <div class="amount-converted">≈ ¥9,922.50</div>
                             </div>
                         </div>
                         
@@ -635,6 +1038,11 @@
                     <div>我</div>
                 </div>
             </div>
+            
+            <!-- 底部安全区域 -->
+            <div class="bottom-safe-area">
+                <div class="home-indicator"></div>
+            </div>
         </div>
     </div>
     
@@ -650,9 +1058,7 @@
             
             // 显示选中的页面
             const selectedPage = document.getElementById(pageId);
-            if (selectedPage) {
-                selectedPage.classList.add('active');
-            }
+            selectedPage.classList.add('active');
             
             // 更新底部导航栏状态
             const navItems = document.querySelectorAll('.nav-item');
@@ -725,6 +1131,14 @@
                         this.style.transition = 'none';
                         this.style.transform = 'rotate(0deg)';
                     }, 500);
+                });
+            }
+            
+            // 账单图标特效
+            const billIcon = document.querySelector('.bill-icon');
+            if (billIcon) {
+                billIcon.addEventListener('click', function() {
+                    window.location.href = 'test.html';
                 });
             }
         });
