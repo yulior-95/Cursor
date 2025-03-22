@@ -231,27 +231,33 @@
             </div>
         </div>
 
-        <!-- 内容区域 -->
-        <div class="content-container">
-            <!-- 日期分组 -->
-            <div class="date-group">今天</div>
+      <!-- 内容区域 -->
+<div class="content-container">
+    <!-- 默认内容 -->
+    <div id="default-content">
+        <!-- 日期分组 -->
+        <div class="date-group">今天</div>
 
-            <!-- 账单项目 -->
-            <div class="bill-item">
-                <div class="bill-icon" style="background: var(--primary-color)">
-                    <i class="fas fa-exchange-alt"></i>
+        <!-- 账单项目 -->
+        <div class="bill-item">
+            <div class="bill-icon" style="background: var(--primary-color)">
+                <i class="fas fa-exchange-alt"></i>
+            </div>
+            <div class="flex-1">
+                <div class="flex justify-between items-center">
+                    <span class="transaction-title">转账</span>
+                    <span class="amount amount-negative">-500 USDT</span>
                 </div>
-                <div class="flex-1">
-                    <div class="flex justify-between items-center">
-                        <span class="transaction-title">转账</span>
-                        <span class="amount amount-negative">-500 USDT</span>
-                    </div>
-                    <div class="flex justify-between mt-1">
-                        <span class="transaction-subtitle">转给：张三</span>
-                        <span class="amount-converted">≈-3625.00 CNY</span>
-                    </div>
+                <div class="flex justify-between mt-1">
+                    <span class="transaction-subtitle">转给：张三</span>
+                    <span class="amount-converted">≈-3625.00 CNY</span>
                 </div>
             </div>
+        </div>
+
+<!-- 动态加载的内容 -->
+<div id="page-content" class="hidden"></div>
+</div>
 
             <div class="bill-item">
                 <div class="bill-icon" style="background: var(--danger-color)">
@@ -299,35 +305,67 @@
     </div>
 
     <script>
-        // Tab切换
+        // Tab切换和页面加载
         document.querySelectorAll('.tab-item').forEach(tab => {
             tab.addEventListener('click', () => {
                 document.querySelectorAll('.tab-item').forEach(t => {
                     t.classList.remove('active');
                 });
                 tab.classList.add('active');
+                
+                // 处理内容切换
+                const defaultContent = document.getElementById('default-content');
+                const pageContent = document.getElementById('page-content');
+                
+                if (tab.textContent === '全部') {
+                    defaultContent.classList.remove('hidden');
+                    pageContent.classList.add('hidden');
+                } else {
+                    defaultContent.classList.add('hidden');
+                    pageContent.classList.remove('hidden');
+                    loadPage(tab.textContent);
+                }
             });
         });
+    
         // 加载页面内容
-        function loadPage(page) {
+        function loadPage(tabName) {
+            const pageMapping = {
+                '私聊转账': 'private_transfer.html',
+                '群聊转账': 'group_transfer.html',
+                '红包': 'red_packet.html',
+                '线上转账': 'online_transfer.html',
+                '线下转账': 'offline_transfer.html',
+                '购买': 'buy.html',
+                '出售': 'sell.html'
+            };
+    
+            const page = pageMapping[tabName];
+            if (!page) return;
+    
             fetch(page)
                 .then(response => response.text())
                 .then(data => {
                     document.getElementById('page-content').innerHTML = data;
-                    document.querySelectorAll('.tab-item').forEach(t => t.classList.remove('active'));
-                    document.querySelector(`.tab-item[onclick="loadPage('${page}')"]`).classList.add('active');
                 })
                 .catch(error => console.error('Error loading page:', error));
         }
-
+    
         // 返回按钮功能
         function goBack() {
-            // 这里可以实现返回功能，比如返回到上一个页面
-            window.history.back();
+            const defaultContent = document.getElementById('default-content');
+            const pageContent = document.getElementById('page-content');
+            
+            // 如果当前在子页面，返回到默认页面
+            if (!pageContent.classList.contains('hidden')) {
+                defaultContent.classList.remove('hidden');
+                pageContent.classList.add('hidden');
+                document.querySelector('.tab-item[onclick="loadPage(\'all.html\')"]').classList.add('active');
+            } else {
+                // 否则返回上一页
+                window.history.back();
+            }
         }
-
-        // 默认加载全部账单
-        loadPage('all.html');
     </script>
 </body>
 </html>
